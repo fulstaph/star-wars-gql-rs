@@ -1,0 +1,30 @@
+[package]
+name = "wookiepedia-gql-rs"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15.0"
+config = "0.11.0"
+actix-web = "3.3.2"
+env_logger = "0.9.0"
+serde = "1.0.103"
+serde_json = "1.0.44"
+serde_derive = "1.0.103"
+async-graphql = "2.0"
+async-graphql-actix-web = "2.0"
+
+[dependencies.sqlx]
+version = "0.5.7"
+default-features = false
+features = [
+    "macros",
+    "postgres",
+    "uuid",
+    "chrono",
+    "migrate",
+    "runtime-async-std-native-tls",
+    "offline"
+]

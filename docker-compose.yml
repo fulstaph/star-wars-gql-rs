@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "wookiepedia", "-U", "postgres" ]
+      interval: 3s
+      retries: 5
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: wookiepedia
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgres
+
+  helper:
+    image: helper
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/wookiepedia
+    volumes:
+      - ./:/app
+
+volumes:
+  postgres:
