@@ -1,11 +1,9 @@
 //! src/config.rs
 
-use std::collections::HashMap;
-
 #[derive(serde::Deserialize)]
 pub struct Settings {
     pub database: Database,
-    pub port: u16
+    pub port: u16,
 }
 
 impl Settings {
@@ -27,21 +25,14 @@ impl Database {
     pub fn connection_string(&self) -> String {
         format!(
             "postgres://{}:{}@{}:{}/{}",
-            self.username,
-            self.password,
-            self.host,
-            self.port,
-            self.name
+            self.username, self.password, self.host, self.port, self.name
         )
     }
 
     pub fn connection_string_without_db(&self) -> String {
         format!(
             "postgres://{}:{}@{}:{}",
-            self.username,
-            self.password,
-            self.host,
-            self.port
+            self.username, self.password, self.host, self.port
         )
     }
 }

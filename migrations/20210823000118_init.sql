@@ -1,13 +1,13 @@
 -- Add migration script here
 BEGIN;
 
-CREATE TYPE filmmaker_profession AS ENUM ('Director', 'Scriptwriter', 'Producer', 'Cinematographer');
+CREATE TYPE profession AS ENUM ('director', 'scriptwriter', 'producer', 'cinematographer');
 
 CREATE TABLE IF NOT EXISTS filmmakers (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     first_name VARCHAR(128) NOT NULL,
     last_name VARCHAR(128) NOT NULL,    
-    profession filmmaker_profession NOT NULL
+    profession profession NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS movies (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS planets (
     name VARCHAR(128) NOT NULL
 );
 
-CREATE TYPE race AS ENUM ('Human', 'Droid', 'Wookie');
+CREATE TYPE race AS ENUM ('human', 'droid', 'wookie');
 
 CREATE TABLE IF NOT EXISTS characters (
     id BIGSERIAL NOT NULL PRIMARY KEY,

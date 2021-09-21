@@ -1,2 +1,2 @@
 pub mod repository;
-mod models;
+pub mod models;

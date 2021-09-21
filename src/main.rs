@@ -1,17 +1,19 @@
 //! Actix web async-graphql example
 //!
 use std::io;
-use std::sync::Arc;
 
-use actix_web::{middleware, web, App, Error, HttpResponse, HttpServer};
+use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 
-use routes::{configure_service, create_schema_with_context};
+use routes::configure_service;
 use sqlx::postgres::PgPoolOptions;
 
-mod schema;
 pub mod config;
-pub mod routes;
 mod database;
+pub mod routes;
+mod schema;
+
+use crate::routes::create_schema_with_repository;
+use database::repository::*;
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -26,15 +28,27 @@ async fn main() -> io::Result<()> {
         .await
         .expect("failed to get postgres conn");
 
-    let schema = create_schema_with_context(connection_pool);    
+    let repo = Repository::new(connection_pool);
+
+    // let starship = repo.get_starship(2)
+    //     .await
+    //     .expect("error fetching starship");
+    //
+    // println!("{:?}", starship);
+
+    // Ok(())
+
+    //let schema = create_schema_with_context(connection_pool);
+    let schema = create_schema_with_repository(repo);
 
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
-            .configure(configure_service).data(schema.clone())
+            .configure(configure_service)
+            .data(schema.clone())
             .default_service(web::to(|| async { HttpResponse::NotFound() }))
     })
-        .bind(cfg.addr())?
-        .run()
-        .await
+    .bind(cfg.addr())?
+    .run()
+    .await
 }
