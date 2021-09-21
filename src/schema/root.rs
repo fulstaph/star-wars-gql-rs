@@ -32,11 +32,29 @@ impl Query {
     }
 
     async fn planet(&self, ctx: &Context<'_>, id: ID) -> Option<Planet> {
-        let id = id.parse::<i64>().unwrap();
+        let id = match id.parse::<i64>() {
+            Ok(id) => id,
+            Err(error) => {
+                warn!("id parsing error: {:?}", error);
+                return None;
+            }
+        };
 
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = match ctx.data::<Repository>() {
+            Ok(repo) => repo,
+            Err(error) => {
+                error!("error getting pool: {:?}", error);
+                return None;
+            }
+        };
 
-        let planet = repo.get_planet(id).await.expect("error fetching planet");
+        let planet = match repo.get_planet(id).await {
+            Ok(planet) => planet,
+            Err(error) => {
+                error!("error fetching planet: {:?}", error);
+                return None;
+            }
+        };
 
         Some(Planet::from(planet))
     }
