@@ -71,7 +71,7 @@ impl From<MovieDatabaseModel> for Movie {
             director_id: movie.director_id,
             scriptwriter_id: movie.scriptwriter_id,
             producer_id: movie.producer_id,
-            release_date: chrono::NaiveDate::from(movie.release_date),
+            release_date: movie.release_date,
         }
     }
 }

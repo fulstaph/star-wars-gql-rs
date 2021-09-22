@@ -13,9 +13,21 @@ pub struct Query;
 #[Object]
 impl Query {
     async fn starship(&self, ctx: &Context<'_>, id: ID) -> Option<Starship> {
-        let id = id.parse::<i64>().unwrap();
+        let id = match id.parse::<i64>() {
+            Ok(id) => id,
+            Err(error) => {
+                warn!("id parsing error: {:?}", error);
+                return None;
+            }
+        };
 
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = match ctx.data::<Repository>() {
+            Ok(repo) => repo,
+            Err(error) => {
+                error!("error getting pool: {:?}", error);
+                return None;
+            }
+        };
 
         let starship = match repo.get_starship(id).await {
             Ok(starship) => starship,
@@ -60,24 +72,69 @@ impl Query {
     }
 
     async fn character(&self, ctx: &Context<'_>, id: ID) -> Option<Character> {
-        let id = id.parse::<i64>().unwrap();
+        let id = match id.parse::<i64>() {
+            Ok(id) => id,
+            Err(error) => {
+                warn!("id parsing error: {:?}", error);
+                return None;
+            }
+        };
 
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = match ctx.data::<Repository>() {
+            Ok(repo) => repo,
+            Err(error) => {
+                error!("error getting pool: {:?}", error);
+                return None;
+            }
+        };
 
-        let character = repo
-            .get_character(id)
-            .await
-            .expect("error fetching character");
+        let character = match repo.get_character(id).await {
+            Ok(char) => char,
+            Err(error) => match error {
+                sqlx::Error::RowNotFound => {
+                    info!("character not found");
+                    return None;
+                }
+                _ => {
+                    error!("error fetching character: {:?}", error);
+                    return None;
+                }
+            },
+        };
 
         Some(Character::from(character))
     }
 
     async fn movie(&self, ctx: &Context<'_>, id: ID) -> Option<Movie> {
-        let id = id.parse::<i64>().unwrap();
+        let id = match id.parse::<i64>() {
+            Ok(id) => id,
+            Err(error) => {
+                warn!("id parsing error: {:?}", error);
+                return None;
+            }
+        };
 
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = match ctx.data::<Repository>() {
+            Ok(repo) => repo,
+            Err(error) => {
+                error!("error getting pool: {:?}", error);
+                return None;
+            }
+        };
 
-        let movie = repo.get_movie(id).await.expect("error fetching movie");
+        let movie = match repo.get_movie(id).await {
+            Ok(movie) => movie,
+            Err(error) => match error {
+                sqlx::Error::RowNotFound => {
+                    info!("movie not found");
+                    return None;
+                }
+                _ => {
+                    error!("error fetching movie: {:?}", error);
+                    return None;
+                }
+            },
+        };
 
         Some(Movie::from(movie))
     }

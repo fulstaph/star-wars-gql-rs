@@ -30,15 +30,6 @@ async fn main() -> io::Result<()> {
 
     let repo = Repository::new(connection_pool);
 
-    // let starship = repo.get_starship(2)
-    //     .await
-    //     .expect("error fetching starship");
-    //
-    // println!("{:?}", starship);
-
-    // Ok(())
-
-    //let schema = create_schema_with_context(connection_pool);
     let schema = create_schema_with_repository(repo);
 
     HttpServer::new(move || {
@@ -46,7 +37,7 @@ async fn main() -> io::Result<()> {
             .wrap(middleware::Logger::default())
             .configure(configure_service)
             .data(schema.clone())
-            .default_service(web::to(|| async { HttpResponse::NotFound() }))
+            .default_service(web::to(|| async { HttpResponse::NotFound().await }))
     })
     .bind(cfg.addr())?
     .run()
