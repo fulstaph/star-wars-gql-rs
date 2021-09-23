@@ -1,5 +1,4 @@
 use crate::database::models;
-use log::{error, info, log, warn};
 use sqlx::PgPool;
 use std::sync::Arc;
 

@@ -4,7 +4,7 @@ use crate::schema::movie::Movie;
 use crate::schema::planet::Planet;
 use crate::schema::starship::Starship;
 use async_graphql::*;
-use log::{error, info, log, warn};
+use log::{error, info, warn};
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 

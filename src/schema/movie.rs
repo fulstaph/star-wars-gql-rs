@@ -1,9 +1,10 @@
 use crate::database::models::Movie as MovieDatabaseModel;
 use crate::database::repository::Repository;
 use crate::schema::filmmaker::Filmmaker;
-use async_graphql::{Context, Object, ID};
-use chrono::Utc;
+use async_graphql::{Context, ID, Object};
 use serde::{Deserialize, Serialize};
+
+type Date = chrono::NaiveDate;
 
 #[derive(Serialize, Deserialize)]
 pub struct Movie {
@@ -12,7 +13,7 @@ pub struct Movie {
     pub director_id: i64,
     pub scriptwriter_id: i64,
     pub producer_id: i64,
-    pub release_date: chrono::NaiveDate,
+    pub release_date: Date,
 }
 
 #[Object]
@@ -58,7 +59,7 @@ impl Movie {
         Some(Filmmaker::from(filmmaker))
     }
 
-    async fn release_date(&self) -> chrono::NaiveDate {
+    async fn release_date(&self) -> Date {
         self.release_date
     }
 }

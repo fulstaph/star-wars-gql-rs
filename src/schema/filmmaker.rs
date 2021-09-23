@@ -2,8 +2,7 @@ use crate::database::models::{
     Filmmaker as FilmmakerDatabaseModel, Profession as ProfessionDatabaseModel,
 };
 use crate::schema::filmmaker::Profession::{Cinematographer, Director, Producer, Scriptwriter};
-use async_graphql::{Context, Enum, Object, ID};
-use chrono::Utc;
+use async_graphql::{Enum, Object, ID};
 use serde::{Deserialize, Serialize};
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
