@@ -36,7 +36,7 @@ pub fn create_schema_with_context(pool: PgPool) -> Schema<Query, EmptyMutation, 
         // limits are commented out, because otherwise introspection query won't work
         // .limit_depth(3)
         // .limit_complexity(15)
-        .data(Data::new(pool).clone())
+        .data(Data::new(pool))
         .finish()
 }
 
