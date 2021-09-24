@@ -1,0 +1,308 @@
+{
+  "db": "PostgreSQL",
+  "0bc6278f2698633788e2c0e74ca885b48b7a9abd1ffa64c9684f94921691100c": {
+    "query": "\n                SELECT id, name\n                FROM planets\n                WHERE id = $1\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false
+      ]
+    }
+  },
+  "34402a8e145a2ebe0680ec7fb17f36fca8e4e6a941585b4808dd630b7dc2a985": {
+    "query": "\n                SELECT id as \"id!\", name as \"name!\", race as \"race: _\", starship_id as \"starship_id!\"\n                FROM characters\n                WHERE id in (\n                    SELECT friend_character_id\n                    FROM friends\n                    WHERE character_id = $1\n                )\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "race: _",
+          "type_info": {
+            "Custom": {
+              "name": "race",
+              "kind": {
+                "Enum": [
+                  "human",
+                  "droid",
+                  "wookie"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "name": "starship_id!",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "3e331c7b2dbe1d84e6fdb404cfa03b731d597fe577358b8087c850d9aafc3c89": {
+    "query": "\n                SELECT id, title, director_id, scriptwriter_id, producer_id, release_date\n                FROM movies\n                WHERE id = $1\n                ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "title",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "director_id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 3,
+          "name": "scriptwriter_id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 4,
+          "name": "producer_id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 5,
+          "name": "release_date",
+          "type_info": "Date"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "769d2ebbef0c18a4f65334319de18beee718ab6629ca498496f77d5f53aec85a": {
+    "query": "\n                SELECT id as \"id!\", name as \"name!\", race as \"race: _\", starship_id as \"starship_id!\"\n                FROM characters\n                WHERE id = $1\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "race: _",
+          "type_info": {
+            "Custom": {
+              "name": "race",
+              "kind": {
+                "Enum": [
+                  "human",
+                  "droid",
+                  "wookie"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "name": "starship_id!",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "9566a9dd941c336f10387d044fd8b49ded39ba2534e8bc29f6fffb89bfcfef23": {
+    "query": "\n                SELECT id as \"id!\", name as \"name!\", race as \"race: _\", starship_id as \"starship_id!\"\n                FROM characters\n                WHERE id = ANY($1)\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "race: _",
+          "type_info": {
+            "Custom": {
+              "name": "race",
+              "kind": {
+                "Enum": [
+                  "human",
+                  "droid",
+                  "wookie"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 3,
+          "name": "starship_id!",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8Array"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "96c3e29a00a202b7b736a76f3182bb77a26914de0ead7ae768a4c3c22aee3891": {
+    "query": "\n                SELECT id, name, class FROM starships WHERE id = $1\n                ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "class",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "e8b268e9690422bf6ca4e8332a77585302547ea73f925374ef8ffc129c9305d6": {
+    "query": "\n                SELECT id as \"id!\",\n                    first_name as \"first_name!\",\n                    last_name as \"last_name!\",\n                    profession as \"profession: _\"\n                FROM filmmakers\n                WHERE id = $1\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "profession: _",
+          "type_info": {
+            "Custom": {
+              "name": "profession",
+              "kind": {
+                "Enum": [
+                  "director",
+                  "scriptwriter",
+                  "producer",
+                  "cinematographer"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  }
+}

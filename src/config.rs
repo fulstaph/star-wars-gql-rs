@@ -44,11 +44,7 @@ pub fn get_config() -> Result<Settings, config::ConfigError> {
 
     let mut settings = config::Config::default();
 
-    // settings.merge(config::File::with_name("config"))?;
-
     settings.merge(config::Environment::with_prefix(app_name.as_str()).separator("_"))?;
-
-    // settings.merge(DotEnv)?;
 
     settings.try_into()
 }
