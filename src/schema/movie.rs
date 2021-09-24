@@ -3,6 +3,7 @@ use crate::database::repository::Repository;
 use crate::schema::filmmaker::Filmmaker;
 use async_graphql::{Context, ID, Object};
 use serde::{Deserialize, Serialize};
+use log::error;
 
 type Date = chrono::NaiveDate;
 
@@ -29,10 +30,15 @@ impl Movie {
     async fn director(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = repo
+        let filmmaker = match repo
             .get_filmmaker(self.director_id)
-            .await
-            .expect("error fetching director");
+            .await {
+                Ok(filmmaker) => filmmaker,
+                Err(error) => {
+                    error!("error fetching director: {:?}", error);
+                    return None;
+                }
+            };
 
         Some(Filmmaker::from(filmmaker))
     }
@@ -40,10 +46,15 @@ impl Movie {
     async fn scriptwriter(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = repo
+        let filmmaker = match repo
             .get_filmmaker(self.scriptwriter_id)
-            .await
-            .expect("error fetching director");
+            .await {
+                Ok(filmmaker) => filmmaker,
+                Err(error) => {
+                    error!("error fetching scriptwriter: {:?}", error);
+                    return None;
+                }
+            };
 
         Some(Filmmaker::from(filmmaker))
     }
@@ -51,10 +62,15 @@ impl Movie {
     async fn producer(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = repo
+        let filmmaker = match repo
             .get_filmmaker(self.producer_id)
-            .await
-            .expect("error fetching director");
+            .await {
+                Ok(filmmaker) => filmmaker,
+                Err(error) => {
+                    error!("error fetching producer: {:?}", error);
+                    return None;
+                }
+            };
 
         Some(Filmmaker::from(filmmaker))
     }

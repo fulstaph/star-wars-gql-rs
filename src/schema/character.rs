@@ -3,6 +3,7 @@ use crate::database::repository::Repository;
 use crate::schema::starship::*;
 use async_graphql::*;
 use serde_derive::{Deserialize, Serialize};
+use log::error;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum Race {
@@ -36,10 +37,15 @@ impl Character {
     async fn starship(&self, ctx: &Context<'_>) -> Option<Starship> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let starship = repo
+        let starship = match repo
             .get_starship(self.starship_id)
-            .await
-            .expect("error fetching starship");
+            .await {
+                Ok(starship) => starship,
+                Err(error) => {
+                    error!("error fetching starship: {:?}", error);
+                    return None;
+                }
+            };
 
         Some(Starship::from(starship))
     }
@@ -47,10 +53,15 @@ impl Character {
     async fn friends(&self, ctx: &Context<'_>) -> Option<Vec<Character>> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let friends = repo
+        let friends = match repo
             .list_characters_friends(self.id)
-            .await
-            .expect("error fetching friends");
+            .await {
+                Ok(friends) => friends,
+                Err(error) => {
+                    error!("error fetching friends: {:?}", error);
+                    return None;
+                }
+            };
 
         match friends.is_empty() {
             true => None,
