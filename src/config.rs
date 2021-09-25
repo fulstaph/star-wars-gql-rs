@@ -4,37 +4,18 @@
 pub struct Settings {
     pub database: Database,
     pub port: u16,
+    pub host: String,
 }
 
 impl Settings {
     pub fn addr(&self) -> String {
-        "127.0.0.1:".to_owned() + &self.port.to_string()
+        self.host.to_owned() + ":" + &self.port.to_string()
     }
 }
 
 #[derive(serde::Deserialize)]
 pub struct Database {
-    pub username: String,
-    pub password: String,
-    pub port: u16,
-    pub host: String,
-    pub name: String,
-}
-
-impl Database {
-    pub fn connection_string(&self) -> String {
-        format!(
-            "postgres://{}:{}@{}:{}/{}",
-            self.username, self.password, self.host, self.port, self.name
-        )
-    }
-
-    pub fn connection_string_without_db(&self) -> String {
-        format!(
-            "postgres://{}:{}@{}:{}",
-            self.username, self.password, self.host, self.port
-        )
-    }
+    pub url: String,
 }
 
 pub fn get_config() -> Result<Settings, config::ConfigError> {

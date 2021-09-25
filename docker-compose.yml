@@ -27,5 +27,14 @@ services:
     volumes:
       - ./:/app
 
+  app:
+    image: ${APP_NAME}:${VERSION}
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/wookiepedia
+      APP_PORT: 8080
+      APP_HOST: 0.0.0.0
+      APP_DATABASE_URL: postgres://postgres:password@postgres/wookiepedia
+    ports:
+      - 8080:8080
 volumes:
   postgres:
