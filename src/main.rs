@@ -1,7 +1,7 @@
 //! Actix web async-graphql example
 //!
-use std::io;
 use actix_web::{web, App, HttpResponse, HttpServer};
+use std::io;
 
 use routes::configure_service;
 use sqlx::postgres::PgPoolOptions;
@@ -9,12 +9,12 @@ use tracing_actix_web::TracingLogger;
 
 pub mod config;
 mod database;
+pub mod observability;
 pub mod routes;
 mod schema;
-pub mod observability;
 
-use crate::routes::create_schema_with_repository;
 use crate::observability::*;
+use crate::routes::create_schema_with_repository;
 use database::repository::*;
 
 #[actix_web::main]
@@ -22,10 +22,10 @@ async fn main() -> io::Result<()> {
     let subscriber = get_subscriber(
         "wookiepedia".into(),
         std::env::var("LOG_LEVEL").unwrap_or_else(|_| "debug".into()),
-        std::io::stdout
+        std::io::stdout,
     );
     init_subscriber(subscriber);
-    
+
     let cfg = config::get_config().expect("failed to read config");
 
     let connection_pool = PgPoolOptions::new()

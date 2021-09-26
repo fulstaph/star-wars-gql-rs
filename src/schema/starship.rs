@@ -1,15 +1,15 @@
-use serde::{Deserialize, Serialize};
-use async_graphql::*;
-use async_graphql::types::ID;
 use crate::database::models;
+use async_graphql::types::ID;
+use async_graphql::*;
+use serde::{Deserialize, Serialize};
 
 type StarshipDatabaseModel = models::Starship;
 
 #[derive(Serialize, Deserialize)]
 pub struct Starship {
     pub id: i64,
-    pub name: String, 
-    pub class: String
+    pub name: String,
+    pub class: String,
 }
 
 #[Object]
@@ -32,7 +32,7 @@ impl From<StarshipDatabaseModel> for Starship {
         Starship {
             id: starship.id,
             name: starship.name,
-            class: starship.class
+            class: starship.class,
         }
     }
 }
