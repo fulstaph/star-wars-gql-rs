@@ -1,19 +1,42 @@
 use crate::database::models;
+use async_trait::async_trait;
 use sqlx::PgPool;
 use std::sync::Arc;
+#[mockall::automock]
+#[async_trait]
+pub trait WookiepediaRepository {
+    async fn get_starship(&self, id: i64) -> Result<models::Starship, sqlx::Error>;
+    async fn get_movie(&self, id: i64) -> Result<models::Movie, sqlx::Error>;
+    async fn get_planet(&self, id: i64) -> Result<models::Planet, sqlx::Error>;
+    async fn get_character(&self, id: i64) -> Result<models::Character, sqlx::Error>;
+    async fn list_characters_friends(
+        &self,
+        character_id: i64,
+    ) -> Result<Vec<models::Character>, sqlx::Error>;
+    async fn list_characters(
+        &self,
+        character_ids: &Vec<i64>,
+    ) -> Result<Vec<models::Character>, sqlx::Error>;
+    async fn get_filmmaker(&self, id: i64) -> Result<models::Filmmaker, sqlx::Error>;
+}
+
+pub type SharedWookiepediaRepository = Arc<dyn WookiepediaRepository + Send + Sync>;
 
 pub struct Repository {
     conn_pool: Arc<PgPool>,
 }
 
 impl Repository {
-    pub fn new(pool: PgPool) -> Repository {
+    pub fn new(pool: PgPool) -> Self {
         Repository {
             conn_pool: Arc::new(pool),
         }
     }
+}
 
-    pub async fn get_starship(&self, id: i64) -> Result<models::Starship, sqlx::Error> {
+#[async_trait]
+impl WookiepediaRepository for Repository {
+    async fn get_starship(&self, id: i64) -> Result<models::Starship, sqlx::Error> {
         let starship = sqlx::query_as!(
             models::Starship,
             r#"
@@ -27,7 +50,7 @@ impl Repository {
         Ok(starship)
     }
 
-    pub async fn get_movie(&self, id: i64) -> Result<models::Movie, sqlx::Error> {
+    async fn get_movie(&self, id: i64) -> Result<models::Movie, sqlx::Error> {
         let movie = sqlx::query_as!(
             models::Movie,
             r#"
@@ -43,7 +66,7 @@ impl Repository {
         Ok(movie)
     }
 
-    pub async fn get_planet(&self, id: i64) -> Result<models::Planet, sqlx::Error> {
+    async fn get_planet(&self, id: i64) -> Result<models::Planet, sqlx::Error> {
         let planet = sqlx::query_as!(
             models::Planet,
             r#"
@@ -59,7 +82,7 @@ impl Repository {
         Ok(planet)
     }
 
-    pub async fn get_character(&self, id: i64) -> Result<models::Character, sqlx::Error> {
+    async fn get_character(&self, id: i64) -> Result<models::Character, sqlx::Error> {
         let character = sqlx::query_as!(
             models::Character,
             r#"
@@ -75,7 +98,7 @@ impl Repository {
         Ok(character)
     }
 
-    pub async fn list_characters_friends(
+    async fn list_characters_friends(
         &self,
         character_id: i64,
     ) -> Result<Vec<models::Character>, sqlx::Error> {
@@ -98,7 +121,7 @@ impl Repository {
         Ok(friends)
     }
 
-    pub async fn list_characters(
+    async fn list_characters(
         &self,
         character_ids: &Vec<i64>,
     ) -> Result<Vec<models::Character>, sqlx::Error> {
@@ -117,7 +140,7 @@ impl Repository {
         Ok(characters)
     }
 
-    pub async fn get_filmmaker(&self, id: i64) -> Result<models::Filmmaker, sqlx::Error> {
+    async fn get_filmmaker(&self, id: i64) -> Result<models::Filmmaker, sqlx::Error> {
         let filmmaker = sqlx::query_as!(
             models::Filmmaker,
             r#"
@@ -136,3 +159,6 @@ impl Repository {
         Ok(filmmaker)
     }
 }
+
+#[cfg(test)]
+mod repository_tests {}

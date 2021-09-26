@@ -1,8 +1,8 @@
-use crate::database::repository::Repository;
 use crate::schema::character::Character;
 use crate::schema::movie::Movie;
 use crate::schema::planet::Planet;
 use crate::schema::starship::Starship;
+use crate::SharedWookiepediaRepository;
 use async_graphql::*;
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
@@ -20,7 +20,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -51,7 +51,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -79,7 +79,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -113,7 +113,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);

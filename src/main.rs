@@ -5,6 +5,7 @@ use std::io;
 
 use routes::configure_service;
 use sqlx::postgres::PgPoolOptions;
+use std::sync::Arc;
 use tracing_actix_web::TracingLogger;
 
 pub mod config;
@@ -36,7 +37,7 @@ async fn main() -> io::Result<()> {
 
     let repo = Repository::new(connection_pool);
 
-    let schema = create_schema_with_repository(repo);
+    let schema = create_schema_with_repository(Arc::new(repo));
 
     HttpServer::new(move || {
         App::new()

@@ -1,5 +1,5 @@
 use crate::database::models::{Character as CharacterDatabaseModel, Race as RaceDatabaseModel};
-use crate::database::repository::Repository;
+use crate::database::repository::SharedWookiepediaRepository;
 use crate::schema::starship::*;
 use async_graphql::*;
 use serde_derive::{Deserialize, Serialize};
@@ -34,7 +34,9 @@ impl Character {
     }
 
     async fn starship(&self, ctx: &Context<'_>) -> Option<Starship> {
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = ctx
+            .data::<SharedWookiepediaRepository>()
+            .expect("error getting pool");
 
         let starship = match repo.get_starship(self.starship_id).await {
             Ok(starship) => starship,
@@ -48,7 +50,9 @@ impl Character {
     }
 
     async fn friends(&self, ctx: &Context<'_>) -> Option<Vec<Character>> {
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = ctx
+            .data::<SharedWookiepediaRepository>()
+            .expect("error getting pool");
 
         let friends = match repo.list_characters_friends(self.id).await {
             Ok(friends) => friends,
