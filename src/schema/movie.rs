@@ -3,7 +3,6 @@ use crate::database::repository::Repository;
 use crate::schema::filmmaker::Filmmaker;
 use async_graphql::{Context, ID, Object};
 use serde::{Deserialize, Serialize};
-use log::error;
 
 type Date = chrono::NaiveDate;
 
@@ -35,7 +34,7 @@ impl Movie {
             .await {
                 Ok(filmmaker) => filmmaker,
                 Err(error) => {
-                    error!("error fetching director: {:?}", error);
+                    tracing::error!("error fetching director: {:?}", error);
                     return None;
                 }
             };
@@ -51,7 +50,7 @@ impl Movie {
             .await {
                 Ok(filmmaker) => filmmaker,
                 Err(error) => {
-                    error!("error fetching scriptwriter: {:?}", error);
+                    tracing::error!("error fetching scriptwriter: {:?}", error);
                     return None;
                 }
             };
@@ -67,7 +66,7 @@ impl Movie {
             .await {
                 Ok(filmmaker) => filmmaker,
                 Err(error) => {
-                    error!("error fetching producer: {:?}", error);
+                    tracing::error!("error fetching producer: {:?}", error);
                     return None;
                 }
             };

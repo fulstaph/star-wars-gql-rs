@@ -4,7 +4,6 @@ use crate::schema::movie::Movie;
 use crate::schema::planet::Planet;
 use crate::schema::starship::Starship;
 use async_graphql::*;
-use log::{error, info, warn};
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 
@@ -16,7 +15,7 @@ impl Query {
         let id = match id.parse::<i64>() {
             Ok(id) => id,
             Err(error) => {
-                warn!("id parsing error: {:?}", error);
+                tracing::warn!("id parsing error: {:?}", error);
                 return None;
             }
         };
@@ -24,7 +23,7 @@ impl Query {
         let repo = match ctx.data::<Repository>() {
             Ok(repo) => repo,
             Err(error) => {
-                error!("error getting pool: {:?}", error);
+                tracing::error!("error getting pool: {:?}", error);
                 return None;
             }
         };
@@ -33,7 +32,7 @@ impl Query {
             Ok(starship) => starship,
             Err(error) => match error {
                 sqlx::Error::RowNotFound => {
-                    info!("starship not found");
+                    tracing::info!("starship not found");
                     return None;
                 }
                 _ => panic!("error fetching starship"),
@@ -47,7 +46,7 @@ impl Query {
         let id = match id.parse::<i64>() {
             Ok(id) => id,
             Err(error) => {
-                warn!("id parsing error: {:?}", error);
+                tracing::warn!("id parsing error: {:?}", error);
                 return None;
             }
         };
@@ -55,7 +54,7 @@ impl Query {
         let repo = match ctx.data::<Repository>() {
             Ok(repo) => repo,
             Err(error) => {
-                error!("error getting pool: {:?}", error);
+                tracing::error!("error getting pool: {:?}", error);
                 return None;
             }
         };
@@ -63,7 +62,7 @@ impl Query {
         let planet = match repo.get_planet(id).await {
             Ok(planet) => planet,
             Err(error) => {
-                error!("error fetching planet: {:?}", error);
+                tracing::error!("error fetching planet: {:?}", error);
                 return None;
             }
         };
@@ -75,7 +74,7 @@ impl Query {
         let id = match id.parse::<i64>() {
             Ok(id) => id,
             Err(error) => {
-                warn!("id parsing error: {:?}", error);
+                tracing::warn!("id parsing error: {:?}", error);
                 return None;
             }
         };
@@ -83,7 +82,7 @@ impl Query {
         let repo = match ctx.data::<Repository>() {
             Ok(repo) => repo,
             Err(error) => {
-                error!("error getting pool: {:?}", error);
+                tracing::error!("error getting pool: {:?}", error);
                 return None;
             }
         };
@@ -92,11 +91,11 @@ impl Query {
             Ok(char) => char,
             Err(error) => match error {
                 sqlx::Error::RowNotFound => {
-                    info!("character not found");
+                    tracing::info!("character not found");
                     return None;
                 }
                 _ => {
-                    error!("error fetching character: {:?}", error);
+                    tracing::error!("error fetching character: {:?}", error);
                     return None;
                 }
             },
@@ -109,7 +108,7 @@ impl Query {
         let id = match id.parse::<i64>() {
             Ok(id) => id,
             Err(error) => {
-                warn!("id parsing error: {:?}", error);
+                tracing::warn!("id parsing error: {:?}", error);
                 return None;
             }
         };
@@ -117,7 +116,7 @@ impl Query {
         let repo = match ctx.data::<Repository>() {
             Ok(repo) => repo,
             Err(error) => {
-                error!("error getting pool: {:?}", error);
+                tracing::error!("error getting pool: {:?}", error);
                 return None;
             }
         };
@@ -126,11 +125,11 @@ impl Query {
             Ok(movie) => movie,
             Err(error) => match error {
                 sqlx::Error::RowNotFound => {
-                    info!("movie not found");
+                    tracing::info!("movie not found");
                     return None;
                 }
                 _ => {
-                    error!("error fetching movie: {:?}", error);
+                    tracing::error!("error fetching movie: {:?}", error);
                     return None;
                 }
             },

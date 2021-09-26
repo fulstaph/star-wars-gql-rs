@@ -3,7 +3,6 @@ use crate::database::repository::Repository;
 use crate::schema::starship::*;
 use async_graphql::*;
 use serde_derive::{Deserialize, Serialize};
-use log::error;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum Race {
@@ -42,7 +41,7 @@ impl Character {
             .await {
                 Ok(starship) => starship,
                 Err(error) => {
-                    error!("error fetching starship: {:?}", error);
+                    tracing::error!("error fetching starship: {:?}", error);
                     return None;
                 }
             };
@@ -58,7 +57,7 @@ impl Character {
             .await {
                 Ok(friends) => friends,
                 Err(error) => {
-                    error!("error fetching friends: {:?}", error);
+                    tracing::error!("error fetching friends: {:?}", error);
                     return None;
                 }
             };
