@@ -3,6 +3,7 @@ use actix_web::{web, HttpRequest, HttpResponse};
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_actix_web::{Request, Response};
+use async_graphql::extensions::Tracing;
 use sqlx::PgPool;
 
 use crate::database::repository::Repository;
@@ -37,6 +38,7 @@ pub fn create_schema_with_context(pool: PgPool) -> Schema<Query, EmptyMutation, 
         // .limit_depth(3)
         // .limit_complexity(15)
         .data(Data::new(pool))
+        .extension(Tracing)
         .finish()
 }
 
@@ -51,5 +53,6 @@ pub fn create_schema_with_repository(
         // .limit_depth(3)
         // .limit_complexity(15)
         .data(repository)
+        .extension(Tracing)
         .finish()
 }

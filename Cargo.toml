@@ -1,32 +1,32 @@
 [package]
+edition = "2021"
 name = "wookiepedia-gql-rs"
 version = "0.1.0"
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dotenv = "0.15.0"
-config = "0.11.0"
 actix-web = "3.3.2"
-env_logger = "0.9.0"
-serde = "1.0.103"
-serde_json = "1.0.44"
-serde_derive = "1.0.103"
-async-graphql = { version = "2.10.0", features = ["chrono"]}
 async-graphql-actix-web = "2.0"
-log = "0.4.14"
-chrono = { version = "0.4.19", features = ["serde"] }
+config = "0.11.0"
+dotenv = "0.15.0"
+serde = "1.0.103"
+serde_derive = "1.0.103"
+serde_json = "1.0.44"
+tracing = { version = "0.1.28", features = ["log"] }
+tracing-futures = "0.2.5"
+tracing-subscriber = { version = "0.2.12", features = ["registry", "env-filter"] }
+tracing-bunyan-formatter = "0.2.4"
+tracing-log = "0.1.2"
+tracing-actix-web = "0.2.1"
+
+[dependencies.async-graphql]
+features = ["chrono", "tracing"]
+version = "2.10.0"
+
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4.19"
 
 [dependencies.sqlx]
-version = "0.5.7"
 default-features = false
-features = [
-    "macros",
-    "postgres",
-    "uuid",
-    "chrono",
-    "migrate",
-    "runtime-async-std-native-tls",
-    "offline"
-]
+features = ["macros", "postgres", "uuid", "chrono", "migrate", "runtime-async-std-native-tls", "offline"]
+version = "0.5.7"
