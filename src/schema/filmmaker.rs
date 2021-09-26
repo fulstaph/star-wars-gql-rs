@@ -13,7 +13,7 @@ pub enum Profession {
     Cinematographer,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Filmmaker {
     pub id: i64,
     pub first_name: String,
@@ -46,6 +46,22 @@ impl From<FilmmakerDatabaseModel> for Filmmaker {
             id: filmmaker.id,
             first_name: filmmaker.first_name,
             last_name: filmmaker.last_name,
+            profession: match filmmaker.profession {
+                ProfessionDatabaseModel::Director => Director,
+                ProfessionDatabaseModel::Cinematographer => Cinematographer,
+                ProfessionDatabaseModel::Producer => Producer,
+                ProfessionDatabaseModel::Scriptwriter => Scriptwriter,
+            },
+        }
+    }
+}
+
+impl From<&FilmmakerDatabaseModel> for Filmmaker {
+    fn from(filmmaker: &FilmmakerDatabaseModel) -> Self {
+        Filmmaker {
+            id: filmmaker.id,
+            first_name: filmmaker.first_name.clone(),
+            last_name: filmmaker.last_name.clone(),
             profession: match filmmaker.profession {
                 ProfessionDatabaseModel::Director => Director,
                 ProfessionDatabaseModel::Cinematographer => Cinematographer,

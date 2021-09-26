@@ -1,14 +1,14 @@
+use crate::database::repository::SharedWookiepediaRepository;
+use crate::loaders::FilmmakerLoader;
+use crate::schema::root::{AppSchema, Query};
 use actix_web::web::Data;
 use actix_web::{web, HttpRequest, HttpResponse};
+use async_graphql::dataloader::DataLoader;
 use async_graphql::extensions::Tracing;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_actix_web::{Request, Response};
 use sqlx::PgPool;
-
-use crate::database::repository::SharedWookiepediaRepository;
-use crate::schema::root::{AppSchema, Query};
-
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/graphql")
@@ -45,13 +45,13 @@ pub fn create_schema_with_context(pool: PgPool) -> Schema<Query, EmptyMutation, 
 pub fn create_schema_with_repository(
     repository: SharedWookiepediaRepository,
 ) -> Schema<Query, EmptyMutation, EmptySubscription> {
-    // let details_data_loader =
-    // DataLoader::new(DetailsLoader { pool: cloned_pool }).max_batch_size(10);
+    let loader = DataLoader::new(FilmmakerLoader::new(repository.clone())).max_batch_size(10);
 
     Schema::build(Query, EmptyMutation, EmptySubscription)
         // limits are commented out, because otherwise introspection query won't work
         // .limit_depth(3)
         // .limit_complexity(15)
+        .data(loader)
         .data(repository)
         // graphql tracing extension seems to be breaking playground
         //.extension(Tracing)

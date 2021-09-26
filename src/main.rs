@@ -10,6 +10,7 @@ use tracing_actix_web::TracingLogger;
 
 pub mod config;
 mod database;
+pub mod loaders;
 pub mod observability;
 pub mod routes;
 mod schema;
