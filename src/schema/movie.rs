@@ -1,7 +1,7 @@
 use crate::database::models::Movie as MovieDatabaseModel;
 use crate::database::repository::Repository;
 use crate::schema::filmmaker::Filmmaker;
-use async_graphql::{Context, ID, Object};
+use async_graphql::{Context, Object, ID};
 use serde::{Deserialize, Serialize};
 
 type Date = chrono::NaiveDate;
@@ -29,15 +29,13 @@ impl Movie {
     async fn director(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = match repo
-            .get_filmmaker(self.director_id)
-            .await {
-                Ok(filmmaker) => filmmaker,
-                Err(error) => {
-                    tracing::error!("error fetching director: {:?}", error);
-                    return None;
-                }
-            };
+        let filmmaker = match repo.get_filmmaker(self.director_id).await {
+            Ok(filmmaker) => filmmaker,
+            Err(error) => {
+                tracing::error!("error fetching director: {:?}", error);
+                return None;
+            }
+        };
 
         Some(Filmmaker::from(filmmaker))
     }
@@ -45,15 +43,13 @@ impl Movie {
     async fn scriptwriter(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = match repo
-            .get_filmmaker(self.scriptwriter_id)
-            .await {
-                Ok(filmmaker) => filmmaker,
-                Err(error) => {
-                    tracing::error!("error fetching scriptwriter: {:?}", error);
-                    return None;
-                }
-            };
+        let filmmaker = match repo.get_filmmaker(self.scriptwriter_id).await {
+            Ok(filmmaker) => filmmaker,
+            Err(error) => {
+                tracing::error!("error fetching scriptwriter: {:?}", error);
+                return None;
+            }
+        };
 
         Some(Filmmaker::from(filmmaker))
     }
@@ -61,15 +57,13 @@ impl Movie {
     async fn producer(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let filmmaker = match repo
-            .get_filmmaker(self.producer_id)
-            .await {
-                Ok(filmmaker) => filmmaker,
-                Err(error) => {
-                    tracing::error!("error fetching producer: {:?}", error);
-                    return None;
-                }
-            };
+        let filmmaker = match repo.get_filmmaker(self.producer_id).await {
+            Ok(filmmaker) => filmmaker,
+            Err(error) => {
+                tracing::error!("error fetching producer: {:?}", error);
+                return None;
+            }
+        };
 
         Some(Filmmaker::from(filmmaker))
     }

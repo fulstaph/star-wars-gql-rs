@@ -36,15 +36,13 @@ impl Character {
     async fn starship(&self, ctx: &Context<'_>) -> Option<Starship> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let starship = match repo
-            .get_starship(self.starship_id)
-            .await {
-                Ok(starship) => starship,
-                Err(error) => {
-                    tracing::error!("error fetching starship: {:?}", error);
-                    return None;
-                }
-            };
+        let starship = match repo.get_starship(self.starship_id).await {
+            Ok(starship) => starship,
+            Err(error) => {
+                tracing::error!("error fetching starship: {:?}", error);
+                return None;
+            }
+        };
 
         Some(Starship::from(starship))
     }
@@ -52,15 +50,13 @@ impl Character {
     async fn friends(&self, ctx: &Context<'_>) -> Option<Vec<Character>> {
         let repo = ctx.data::<Repository>().expect("error getting pool");
 
-        let friends = match repo
-            .list_characters_friends(self.id)
-            .await {
-                Ok(friends) => friends,
-                Err(error) => {
-                    tracing::error!("error fetching friends: {:?}", error);
-                    return None;
-                }
-            };
+        let friends = match repo.list_characters_friends(self.id).await {
+            Ok(friends) => friends,
+            Err(error) => {
+                tracing::error!("error fetching friends: {:?}", error);
+                return None;
+            }
+        };
 
         match friends.is_empty() {
             true => None,

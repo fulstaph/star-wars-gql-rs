@@ -1,9 +1,9 @@
 use actix_web::web::Data;
 use actix_web::{web, HttpRequest, HttpResponse};
+use async_graphql::extensions::Tracing;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_actix_web::{Request, Response};
-use async_graphql::extensions::Tracing;
 use sqlx::PgPool;
 
 use crate::database::repository::Repository;
