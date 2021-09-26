@@ -1,8 +1,8 @@
-use crate::database::repository::Repository;
 use crate::schema::character::Character;
 use crate::schema::movie::Movie;
 use crate::schema::planet::Planet;
 use crate::schema::starship::Starship;
+use crate::SharedWookiepediaRepository;
 use async_graphql::*;
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
@@ -20,7 +20,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -51,7 +51,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -79,7 +79,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -113,7 +113,7 @@ impl Query {
             }
         };
 
-        let repo = match ctx.data::<Repository>() {
+        let repo = match ctx.data::<SharedWookiepediaRepository>() {
             Ok(repo) => repo,
             Err(error) => {
                 tracing::error!("error getting pool: {:?}", error);
@@ -136,5 +136,67 @@ impl Query {
         };
 
         Some(Movie::from(movie))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        database::models::{Planet, Starship},
+        database::repository::MockWookiepediaRepository,
+        routes::create_schema_with_repository,
+    };
+    use async_graphql::Request;
+    use std::sync::Arc;
+
+    #[async_std::test]
+    async fn test_fetching_starship() {
+        let mut repo = MockWookiepediaRepository::new();
+        repo.expect_get_starship()
+            .with(mockall::predicate::eq(1))
+            .times(1)
+            .returning(|_| {
+                Ok(Starship {
+                    id: 1,
+                    name: "test".to_string(),
+                    class: "test".to_string(),
+                })
+            });
+
+        let schema = create_schema_with_repository(Arc::new(repo));
+
+        let response = schema
+            .execute(Request::new("{ starship(id: \"1\") { id name class}}"))
+            .await;
+
+        assert_eq!(
+            response.data.to_string(),
+            r#"{starship: {class: "test",id: "1",name: "test"}}"#.to_string()
+        );
+    }
+
+    #[async_std::test]
+    async fn test_fetching_planet() {
+        let mut repo = MockWookiepediaRepository::new();
+        repo.expect_get_planet()
+            .with(mockall::predicate::eq(1))
+            .times(1)
+            .returning(|_| {
+                Ok(Planet {
+                    id: 1,
+                    name: "test".to_string(),
+                })
+            });
+
+        let schema = create_schema_with_repository(Arc::new(repo));
+
+        let response = schema
+            .execute(Request::new("{ planet(id: \"1\") { id name }}"))
+            .await;
+
+        assert_eq!(
+            response.data.to_string(),
+            r#"{planet: {id: "1",name: "test"}}"#.to_string()
+        );
     }
 }

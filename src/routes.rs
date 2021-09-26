@@ -6,7 +6,7 @@ use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_actix_web::{Request, Response};
 use sqlx::PgPool;
 
-use crate::database::repository::Repository;
+use crate::database::repository::SharedWookiepediaRepository;
 use crate::schema::root::{AppSchema, Query};
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
@@ -43,7 +43,7 @@ pub fn create_schema_with_context(pool: PgPool) -> Schema<Query, EmptyMutation, 
 }
 
 pub fn create_schema_with_repository(
-    repository: Repository,
+    repository: SharedWookiepediaRepository,
 ) -> Schema<Query, EmptyMutation, EmptySubscription> {
     // let details_data_loader =
     // DataLoader::new(DetailsLoader { pool: cloned_pool }).max_batch_size(10);
@@ -53,6 +53,7 @@ pub fn create_schema_with_repository(
         // .limit_depth(3)
         // .limit_complexity(15)
         .data(repository)
-        .extension(Tracing)
+        // graphql tracing extension seems to be breaking playground
+        //.extension(Tracing)
         .finish()
 }

@@ -1,5 +1,6 @@
-use crate::database::models::Movie as MovieDatabaseModel;
-use crate::database::repository::Repository;
+use crate::database::{
+    models::Movie as MovieDatabaseModel, repository::SharedWookiepediaRepository,
+};
 use crate::schema::filmmaker::Filmmaker;
 use async_graphql::{Context, Object, ID};
 use serde::{Deserialize, Serialize};
@@ -27,7 +28,9 @@ impl Movie {
     }
 
     async fn director(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = ctx
+            .data::<SharedWookiepediaRepository>()
+            .expect("error getting pool");
 
         let filmmaker = match repo.get_filmmaker(self.director_id).await {
             Ok(filmmaker) => filmmaker,
@@ -41,7 +44,9 @@ impl Movie {
     }
 
     async fn scriptwriter(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = ctx
+            .data::<SharedWookiepediaRepository>()
+            .expect("error getting pool");
 
         let filmmaker = match repo.get_filmmaker(self.scriptwriter_id).await {
             Ok(filmmaker) => filmmaker,
@@ -55,7 +60,9 @@ impl Movie {
     }
 
     async fn producer(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx.data::<Repository>().expect("error getting pool");
+        let repo = ctx
+            .data::<SharedWookiepediaRepository>()
+            .expect("error getting pool");
 
         let filmmaker = match repo.get_filmmaker(self.producer_id).await {
             Ok(filmmaker) => filmmaker,
