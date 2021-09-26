@@ -18,6 +18,7 @@ tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
 tracing-actix-web = "0.2.1"
 async-trait = "0.1.41"
+async-std = { version = "1.4.0", features = [ "attributes" ] }
 mockall = "0.10.2"
 
 [dependencies.async-graphql]

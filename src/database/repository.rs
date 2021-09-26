@@ -2,6 +2,7 @@ use crate::database::models;
 use async_trait::async_trait;
 use sqlx::PgPool;
 use std::sync::Arc;
+
 #[mockall::automock]
 #[async_trait]
 pub trait WookiepediaRepository {
@@ -160,5 +161,65 @@ impl WookiepediaRepository for Repository {
     }
 }
 
+// TODO: move query tests using repo mock into schema module
 #[cfg(test)]
-mod repository_tests {}
+mod tests {
+    use crate::{
+        database::models::{Planet, Starship},
+        routes::create_schema_with_repository,
+    };
+    use async_graphql::Request;
+
+    use super::*;
+
+    #[async_std::test]
+    async fn test_fetching_starship() {
+        let mut repo = MockWookiepediaRepository::new();
+        repo.expect_get_starship()
+            .with(mockall::predicate::eq(1))
+            .times(1)
+            .returning(|_| {
+                Ok(Starship {
+                    id: 1,
+                    name: "test".to_string(),
+                    class: "test".to_string(),
+                })
+            });
+
+        let schema = create_schema_with_repository(Arc::new(repo));
+
+        let response = schema
+            .execute(Request::new("{ starship(id: \"1\") { id name class}}"))
+            .await;
+
+        assert_eq!(
+            response.data.to_string(),
+            r#"{starship: {class: "test",id: "1",name: "test"}}"#.to_string()
+        );
+    }
+
+    #[async_std::test]
+    async fn test_fetching_planet() {
+        let mut repo = MockWookiepediaRepository::new();
+        repo.expect_get_planet()
+            .with(mockall::predicate::eq(1))
+            .times(1)
+            .returning(|_| {
+                Ok(Planet {
+                    id: 1,
+                    name: "test".to_string(),
+                })
+            });
+
+        let schema = create_schema_with_repository(Arc::new(repo));
+
+        let response = schema
+            .execute(Request::new("{ planet(id: \"1\") { id name }}"))
+            .await;
+
+        assert_eq!(
+            response.data.to_string(),
+            r#"{planet: {id: "1",name: "test"}}"#.to_string()
+        );
+    }
+}
