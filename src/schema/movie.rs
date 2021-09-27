@@ -1,8 +1,8 @@
-use crate::database::{
-    models::Movie as MovieDatabaseModel, repository::SharedWookiepediaRepository,
-};
+use crate::database::models::Movie as MovieDatabaseModel;
+use crate::loaders::*;
 use crate::schema::filmmaker::Filmmaker;
-use async_graphql::{Context, Object, ID};
+use async_graphql::dataloader::DataLoader;
+use async_graphql::{Context, Object, Result, ID};
 use serde::{Deserialize, Serialize};
 
 type Date = chrono::NaiveDate;
@@ -27,52 +27,34 @@ impl Movie {
         self.title.as_str()
     }
 
-    async fn director(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx
-            .data::<SharedWookiepediaRepository>()
-            .expect("error getting pool");
+    async fn director(&self, ctx: &Context<'_>) -> Result<Filmmaker> {
+        let loader = ctx
+            .data::<DataLoader<FilmmakerLoader>>()
+            .expect("error getting dataloader");
 
-        let filmmaker = match repo.get_filmmaker(self.director_id).await {
-            Ok(filmmaker) => filmmaker,
-            Err(error) => {
-                tracing::error!("error fetching director: {:?}", error);
-                return None;
-            }
-        };
+        let filmmaker = loader.load_one(self.director_id).await?;
 
-        Some(Filmmaker::from(filmmaker))
+        filmmaker.ok_or_else(|| "Not found".into())
     }
 
-    async fn scriptwriter(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx
-            .data::<SharedWookiepediaRepository>()
-            .expect("error getting pool");
+    async fn scriptwriter(&self, ctx: &Context<'_>) -> Result<Filmmaker> {
+        let loader = ctx
+            .data::<DataLoader<FilmmakerLoader>>()
+            .expect("error getting dataloader");
 
-        let filmmaker = match repo.get_filmmaker(self.scriptwriter_id).await {
-            Ok(filmmaker) => filmmaker,
-            Err(error) => {
-                tracing::error!("error fetching scriptwriter: {:?}", error);
-                return None;
-            }
-        };
+        let filmmaker = loader.load_one(self.director_id).await?;
 
-        Some(Filmmaker::from(filmmaker))
+        filmmaker.ok_or_else(|| "Not found".into())
     }
 
-    async fn producer(&self, ctx: &Context<'_>) -> Option<Filmmaker> {
-        let repo = ctx
-            .data::<SharedWookiepediaRepository>()
-            .expect("error getting pool");
+    async fn producer(&self, ctx: &Context<'_>) -> Result<Filmmaker> {
+        let loader = ctx
+            .data::<DataLoader<FilmmakerLoader>>()
+            .expect("error getting dataloader");
 
-        let filmmaker = match repo.get_filmmaker(self.producer_id).await {
-            Ok(filmmaker) => filmmaker,
-            Err(error) => {
-                tracing::error!("error fetching producer: {:?}", error);
-                return None;
-            }
-        };
+        let filmmaker = loader.load_one(self.director_id).await?;
 
-        Some(Filmmaker::from(filmmaker))
+        filmmaker.ok_or_else(|| "Not found".into())
     }
 
     async fn release_date(&self) -> Date {
