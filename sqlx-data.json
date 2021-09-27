@@ -26,6 +26,56 @@
       ]
     }
   },
+  "10ca85ff006c8f525e04d2918b5018ed29eb41bc94ff15e3b6db5fa626695b18": {
+    "query": "\n                SELECT id as \"id!\",\n                    first_name as \"first_name!\",\n                    last_name as \"last_name!\",\n                    profession as \"profession: _\"\n                FROM filmmakers\n                WHERE id = ANY($1)\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "profession: _",
+          "type_info": {
+            "Custom": {
+              "name": "profession",
+              "kind": {
+                "Enum": [
+                  "director",
+                  "scriptwriter",
+                  "producer",
+                  "cinematographer"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8Array"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "34402a8e145a2ebe0680ec7fb17f36fca8e4e6a941585b4808dd630b7dc2a985": {
     "query": "\n                SELECT id as \"id!\", name as \"name!\", race as \"race: _\", starship_id as \"starship_id!\"\n                FROM characters\n                WHERE id in (\n                    SELECT friend_character_id\n                    FROM friends\n                    WHERE character_id = $1\n                )\n            ",
     "describe": {
