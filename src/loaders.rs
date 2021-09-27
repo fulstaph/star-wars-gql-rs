@@ -1,8 +1,8 @@
-use async_graphql::Error;
-
 use crate::{database::repository::SharedWookiepediaRepository, schema::filmmaker::Filmmaker};
 use async_graphql::dataloader::Loader;
+use async_graphql::Error;
 use std::collections::HashMap;
+
 pub struct FilmmakerLoader {
     repository: SharedWookiepediaRepository,
 }
