@@ -25,6 +25,24 @@ jobs:
           command: fmt
           args: --all -- --check
 
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components: clippy
+          override: true
+      - name: Run clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- -D warnings
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -40,7 +58,7 @@ jobs:
           command: test
 
   build:
-    needs: test
+    needs: [fmt, clippy, test]
     name: Build
     runs-on: ubuntu-latest
     steps:
