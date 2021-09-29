@@ -21,7 +21,7 @@ impl Loader<i64> for FilmmakerLoader {
     async fn load(&self, keys: &[i64]) -> Result<HashMap<i64, Self::Value>, Self::Error> {
         let filmmakers = self
             .repository
-            .list_filmmakers(&Vec::from(keys))
+            .list_filmmakers(keys)
             .await
             .expect("can't load filmmakers");
 

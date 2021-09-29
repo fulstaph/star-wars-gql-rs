@@ -18,10 +18,10 @@ pub trait WookiepediaRepository {
     ) -> Result<Vec<models::Character>, sqlx::Error>;
     async fn list_characters(
         &self,
-        character_ids: &Vec<i64>,
+        character_ids: &[i64],
     ) -> Result<Vec<models::Character>, sqlx::Error>;
     async fn get_filmmaker(&self, id: i64) -> Result<models::Filmmaker, sqlx::Error>;
-    async fn list_filmmakers(&self, ids: &Vec<i64>) -> Result<Vec<models::Filmmaker>, sqlx::Error>;
+    async fn list_filmmakers(&self, ids: &[i64]) -> Result<Vec<models::Filmmaker>, sqlx::Error>;
 }
 
 pub struct Repository {
@@ -125,7 +125,7 @@ impl WookiepediaRepository for Repository {
 
     async fn list_characters(
         &self,
-        character_ids: &Vec<i64>,
+        character_ids: &[i64],
     ) -> Result<Vec<models::Character>, sqlx::Error> {
         let characters = sqlx::query_as!(
             models::Character,
@@ -161,7 +161,7 @@ impl WookiepediaRepository for Repository {
         Ok(filmmaker)
     }
 
-    async fn list_filmmakers(&self, ids: &Vec<i64>) -> Result<Vec<models::Filmmaker>, sqlx::Error> {
+    async fn list_filmmakers(&self, ids: &[i64]) -> Result<Vec<models::Filmmaker>, sqlx::Error> {
         let filmmakers = sqlx::query_as!(
             models::Filmmaker,
             r#"
