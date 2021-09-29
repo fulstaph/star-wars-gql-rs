@@ -66,5 +66,5 @@ jobs:
           repository: fulstaph/star-wars-gql-rs
           path: .
           dockerfile: ./build/Dockerfile
-          tags: ${{ GITHUB_RUN_ID }}
+          tags: ${{ github.run.id }}
           push: ${{ github.event_name == 'push' }}
