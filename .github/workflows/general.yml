@@ -37,6 +37,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
+          args: --verbose --workspace
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -122,27 +123,9 @@ jobs:
         with:
           command: test
 
-  build:
-    needs: [fmt, clippy, test]
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install nightly toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
-      - name: Run build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-
   docker-build:
-    needs: build
-    name: Docker Build
+    name: Docker Build & Push
+    needs: [fmt, clippy, test]
     runs-on: ubuntu-latest
     permissions:
       packages: write
