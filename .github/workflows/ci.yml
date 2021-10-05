@@ -1,0 +1,122 @@
+name: Analysis
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  CI: 1
+
+jobs:
+  prepare:
+    name: Build & cache dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cargo Cache
+        id: cargo-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+      - name: Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: stable
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --workspace
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: wookiepedia-gql-rs
+      #     path: |
+      #       ./target/debug/wookiepedia-gql-rs
+
+  fmt:
+    name: Formatting
+    needs:
+      - prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt
+      - name: Run format
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cargo Cache
+        id: cargo-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: clippy
+          override: true
+          toolchain: stable
+      - name: Clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          args: -- -D warnings
+          name: Clippy Results
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cargo Cache
+        id: cargo-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: stable
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
