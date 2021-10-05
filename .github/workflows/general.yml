@@ -91,7 +91,8 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           args: -- -D warnings
-          token: ${{ secrets.GITHUB_TOKEN }
+          name: Clippy Results
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     name: Test
