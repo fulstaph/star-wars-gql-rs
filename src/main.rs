@@ -16,7 +16,6 @@ pub mod routes;
 mod schema;
 
 use crate::observability::*;
-use crate::routes::create_schema_with_repository;
 use database::repository::*;
 
 #[actix_web::main]
@@ -38,7 +37,7 @@ async fn main() -> io::Result<()> {
 
     let repo = Repository::new(connection_pool);
 
-    let schema = create_schema_with_repository(Arc::new(repo));
+    let schema = routes::create_schema_with_repository(Arc::new(repo));
 
     HttpServer::new(move || {
         App::new()
